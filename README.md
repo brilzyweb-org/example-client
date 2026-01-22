@@ -37,6 +37,9 @@ npm run dev              # Vite (5173) + Wrangler (8787)
 npm run build            # Оба билда (client + server)
 npm run build:client     # Только ассеты для Pages
 npm run build:server     # Только worker.js для VPS
+
+# Деплой
+npm run deploy:all       # Собрать и отправить статику в CDN + worker на VPS
 ```
 
 ## 📋 План настройки двух сред
