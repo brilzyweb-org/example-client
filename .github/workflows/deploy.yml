@@ -30,19 +30,18 @@ jobs:
             exit 0
           fi
           mkdir -p ~/.ssh
-          # Сохраняем SSH ключ (GitHub Secrets автоматически сохраняют переносы строк)
+          # Сохраняем SSH ключ
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # Проверяем формат ключа перед использованием
-          if ! ssh-keygen -l -f ~/.ssh/id_rsa > /dev/null 2>&1; then
-            echo "❌ Invalid SSH key format. Check VPS_SSH_KEY secret."
-            echo "Key should start with: -----BEGIN OPENSSH PRIVATE KEY-----"
-            exit 1
-          fi
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
           # Запускаем ssh-agent для автоматического использования ключа
           eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa
+          # Если ssh-add не сработает, будет ошибка - это нормально
+          ssh-add ~/.ssh/id_rsa || {
+            echo "⚠️ Failed to add SSH key. Check VPS_SSH_KEY format."
+            echo "Key should be a valid OpenSSH private key."
+            exit 1
+          }
       
       - name: Deploy (CDN + VPS)
         run: npm run deploy:all
