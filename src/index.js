@@ -1,10 +1,10 @@
-import { getOptimizedImage } from '@agency/core';
 import { Hono } from 'hono';
 import adminConfigYml from './admin/config.yml.js';
 import adminIndexHtml from './admin/index.html.js';
 import { Layout } from './components/Layout.js';
 import { About } from './pages/About/About.js';
 import { Home } from './pages/Home/Home.js';
+import { getOptimizedImage } from './utils/imageOptimizer.js';
 import { getPageAssets } from './utils/pageAssets.js';
 
 // ============================================================================
