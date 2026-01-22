@@ -1,0 +1,6 @@
+{
+  "id": "example-client",
+  "domain": "example-client.fi",
+  "domains": ["example-client.fi", "webpreneurstudio.com"],
+  "db_key": "example-client-db-key"
+}

@@ -1,0 +1,121 @@
+/**
+ * Уникальные стили для страницы About
+ */
+
+.about-content {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .intro {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+  }
+
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+  }
+
+  h2 {
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 {
+    margin: 2rem 0 1rem;
+    color: #2c3e50;
+    font-size: 1.3rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
+  }
+
+  .tech-category {
+    margin-bottom: 2.5rem;
+
+    &:first-child {
+      margin-top: 1rem;
+    }
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .tech-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e9ecef;
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      background: white;
+    }
+
+    .tech-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    h4 {
+      margin: 0 0 0.5rem;
+      color: #2c3e50;
+      font-size: 1.2rem;
+    }
+
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+  }
+
+  .tech-stats {
+    display: flex;
+    gap: 2rem;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    justify-content: center;
+
+    &-item {
+      text-align: center;
+    }
+
+    &-number {
+      display: block;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #3498db;
+    }
+
+    &-label {
+      display: block;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+  }
+
+  .tech-list {
+    margin-left: 2rem;
+    line-height: 2;
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+  }
+}

@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.wrangler/
+.temp/
+.DS_Store
+*.log
+.env
+.env.local
+# Cloudflare Workers секреты (локальная разработка)
+.dev.vars
+# SQLite базы данных (локальные)
+*.sqlite
+*.sqlite3
+*.db
+# Автоматически сгенерированные файлы
+src/utils/commonAssets.config.js
+src/components/index.js
+# Собранные файлы (создаются при npm run build)
+example-client/

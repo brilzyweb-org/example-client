@@ -1,0 +1,19 @@
+# Cloudflare Workers - Секреты для локальной разработки
+# Скопируй этот файл в .dev.vars и заполни реальными значениями
+# Wrangler автоматически подхватит эти переменные при запуске `wrangler dev`
+#
+# ВАЖНО: .dev.vars уже добавлен в .gitignore - НЕ коммить этот файл!
+
+# Clerk Authentication (если используется)
+# CLERK_SECRET_KEY=sk_test_...
+
+# Cloudflare R2 Storage (для хранения картинок)
+# R2_ACCESS_KEY_ID=...
+# R2_SECRET_ACCESS_KEY=...
+
+# Google API Keys (если используется)
+# GOOGLE_API_KEY=...
+
+# Другие секреты
+# DATABASE_URL=...
+# JWT_SECRET=...

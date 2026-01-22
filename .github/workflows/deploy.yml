@@ -1,0 +1,54 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build client assets
+        run: npm run build:client
+      
+      - name: Build server files
+        run: npm run build:server
+      
+      - name: Deploy to Cloudflare Pages
+        run: npx wrangler pages deploy dist/client --project-name=example-client
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Deploy worker.js to VPS
+        run: |
+          # Доставляем один файл worker.js на VPS
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            dist/server/worker.js \
+            ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/app/projects/example-client/worker.js
+          
+          echo "✓ worker.js доставлен на VPS"
+          echo "ℹ️  workerd автоматически подхватит изменения (hot reload)"

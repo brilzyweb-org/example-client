@@ -1,0 +1,47 @@
+/**
+ * Общие SCSS миксины
+ */
+
+@use "sass:math";
+
+// Адаптивный размер шрифта
+@mixin responsive-font($min-size, $max-size, $min-width: 320px, $max-width: 1200px) {
+  font-size: clamp(#{$min-size}, #{$min-size} + (#{$max-size} - #{$min-size}) * ((100vw - #{$min-width}) / (#{$max-width} - #{$min-width})), #{$max-size});
+}
+
+// Flexbox центрирование
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Абсолютное центрирование
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// Обрезка текста с многоточием
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Многострочная обрезка текста
+@mixin text-ellipsis-multiline($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Плавный переход
+@mixin transition($properties...) {
+  transition-property: $properties;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}

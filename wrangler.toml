@@ -1,0 +1,38 @@
+name = "example-client"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Порт по умолчанию: 8787
+# Wrangler запускает workerd (Cloudflare Workers runtime)
+
+[dev]
+# Используем общую базу данных с sync-service
+persist_to = "../../.wrangler/shared-d1"
+
+[vars]
+# Окружение: development | production
+ENVIRONMENT = "development"
+
+# URL для подключения к Vite dev server (порт 5173)
+# В production это будет URL к CDN или собранным ассетам
+ASSETS_URL = "http://localhost:5173"
+
+# Публичный URL для R2 бакета с картинками (Custom Domain)
+# Пример: https://cdn.example-client.com
+# Настройка: В панели Cloudflare R2 → Connect Domain
+R2_PUBLIC_URL = "https://cdn.example-client.com"
+
+# Gitea для Decap CMS
+GITEA_URL = "http://localhost:3000"
+# Client ID из OAuth приложения Gitea
+GITEA_APP_ID = "e707cefe-249b-4763-b0ff-6c282e6b79d2"
+
+# Sync Service URL (для webhook)
+SYNC_SERVICE_URL = "http://localhost:8788"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "example-db"
+database_id = "your-database-id-here"
+# Путь к миграциям для локальной разработки
+migrations_dir = "migrations"

@@ -1,0 +1,33 @@
+/**
+ * Общие SCSS переменные
+ */
+
+// Цвета
+$primary-color: #3498db;
+$secondary-color: #2c3e50;
+$text-color: #333;
+$text-light: #666;
+$bg-color: #f5f5f5;
+$white: #ffffff;
+
+// Отступы
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+$spacing-xl: 3rem;
+
+// Размеры
+$container-max-width: 1200px;
+$border-radius: 8px;
+$border-radius-sm: 4px;
+
+// Тени
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+$shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+// Переходы
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
