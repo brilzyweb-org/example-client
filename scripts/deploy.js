@@ -202,8 +202,8 @@ async function deploy() {
     process.exit(1);
   }
 
-  // 4. Отправка worker на VPS
-  const workerPath = join(projectRoot, projectId, 'server', 'worker.js');
+  // 4. Отправка bundle.js на VPS
+  const bundlePath = join(projectRoot, projectId, 'server', 'bundle.js');
   const vpsHost = process.env.VPS_HOST;
   const vpsUsername = process.env.VPS_USERNAME || 'root';
   // VPS_WORKER_PATH из Organization Secrets - базовый путь (например: /opt/agency-engine/projects)
@@ -212,20 +212,20 @@ async function deploy() {
   const vpsWorkerPath = `${baseWorkerPath}/${projectId}`;
 
   if (!vpsHost) {
-    console.log('⚠️  VPS_HOST не установлен, пропускаем деплой worker на VPS');
+    console.log('⚠️  VPS_HOST не установлен, пропускаем деплой bundle.js на VPS');
     console.log('💡 Установи переменные: VPS_HOST, VPS_USERNAME, VPS_WORKER_PATH');
   } else {
-    console.log('📤 Отправка worker на VPS...');
+    console.log('📤 Отправка bundle.js на VPS...');
     try {
       // Используем scp для отправки файла (кроссплатформенно)
       const isWindows = platform() === 'win32';
       const scpCommand = isWindows 
-        ? `scp "${workerPath}" ${vpsUsername}@${vpsHost}:${vpsWorkerPath.replace(/\\/g, '/')}/worker.js`
-        : `scp "${workerPath}" ${vpsUsername}@${vpsHost}:${vpsWorkerPath}/worker.js`;
+        ? `scp "${bundlePath}" ${vpsUsername}@${vpsHost}:${vpsWorkerPath.replace(/\\/g, '/')}/bundle.js`
+        : `scp "${bundlePath}" ${vpsUsername}@${vpsHost}:${vpsWorkerPath}/bundle.js`;
       execSync(scpCommand, { stdio: 'inherit', shell: isWindows });
-      console.log(`✅ Worker отправлен на VPS: ${vpsWorkerPath}/worker.js\n`);
+      console.log(`✅ Bundle отправлен на VPS: ${vpsWorkerPath}/bundle.js\n`);
     } catch (error) {
-      console.error('❌ Ошибка при отправке worker на VPS:', error.message);
+      console.error('❌ Ошибка при отправке bundle.js на VPS:', error.message);
       console.log('💡 Проверь SSH доступ и переменные окружения');
       console.log('💡 Убедись, что установлен OpenSSH или используй WSL');
       process.exit(1);
@@ -235,7 +235,7 @@ async function deploy() {
   console.log('🎉 Деплой завершен успешно!');
   console.log(`   📦 Статика: https://cdn.brilzy.com/${projectId}/`);
   if (vpsHost) {
-    console.log(`   ⚙️  Worker: ${vpsHost}:${vpsWorkerPath}/worker.js`);
+    console.log(`   ⚙️  Bundle: ${vpsHost}:${vpsWorkerPath}/bundle.js`);
   }
 }
 

@@ -23,7 +23,7 @@ example-client/
 │   │   ├── css/           # Скомпилированные стили
 │   │   └── js/            # Скомпилированные скрипты
 │   └── server/            
-│       └── worker.js      # Один файл для VPS (workerd)
+│       └── bundle.js      # Один файл для VPS (workerd)
 └── .github/workflows/      # GitHub Actions
 ```
 
@@ -36,7 +36,7 @@ npm run dev              # Vite (5173) + Wrangler (8787)
 # Сборка
 npm run build            # Оба билда (client + server)
 npm run build:client     # Только ассеты для Pages
-npm run build:server     # Только worker.js для VPS
+npm run build:server     # Только bundle.js для VPS
 
 # Деплой
 npm run deploy:all       # Собрать и отправить статику в CDN + worker на VPS
@@ -96,7 +96,7 @@ const config :Workerd.Config = (
 );
 
 const mainWorker :Workerd.Worker = (
-  serviceWorkerScript = embed "worker.js",
+  serviceWorkerScript = embed "bundle.js",
   compatibilityDate = "2024-01-01",
   
   bindings = [
@@ -200,7 +200,7 @@ bindings = [
 ## 🐛 Troubleshooting
 
 ### Workerd не подхватывает изменения
-- Проверь права на файл `worker.js`
+- Проверь права на файл `bundle.js`
 - Проверь логи: `sudo journalctl -u workerd -f`
 
 ### Ассеты не загружаются

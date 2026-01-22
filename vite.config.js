@@ -242,7 +242,7 @@ ${exports}
 }
 
 export default defineConfig(({ mode }) => {
-  // Режим 'server' - собираем все в один worker.js для VPS
+  // Режим 'server' - собираем все в один bundle.js для VPS
   if (mode === 'server') {
     return {
       root: '.',
@@ -250,14 +250,14 @@ export default defineConfig(({ mode }) => {
       build: {
         outDir: `${PROJECT_ID}/server`, // Используем имя проекта вместо dist/server
         emptyOutDir: true,
-        // Собираем все в один файл worker.js
+        // Собираем все в один файл bundle.js
         rollupOptions: {
           input: resolve(__dirname, 'src/index.js'),
           // Сохраняем именованные экспорты (важно для Durable Objects)
           preserveEntrySignatures: 'exports-only',
           output: {
             format: 'es',
-            entryFileNames: 'worker.js',
+            entryFileNames: 'bundle.js',
             // Все зависимости инлайнятся в один файл
             inlineDynamicImports: true,
           },
@@ -284,9 +284,9 @@ export default defineConfig(({ mode }) => {
           },
         },
         {
-          name: 'rename-to-worker',
+          name: 'rename-to-bundle',
           closeBundle() {
-            console.log(`✓ Worker собран в ${PROJECT_ID}/server/worker.js`);
+            console.log(`✓ Bundle собран в ${PROJECT_ID}/server/bundle.js`);
           },
         },
       ],
