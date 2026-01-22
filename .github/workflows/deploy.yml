@@ -24,8 +24,11 @@ jobs:
         run: npm ci
       
       - name: Setup SSH for VPS
-        if: secrets.VPS_HOST != ''
         run: |
+          if [ -z "${{ secrets.VPS_HOST }}" ] || [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then
+            echo "⚠️ VPS secrets not configured, skipping SSH setup"
+            exit 0
+          fi
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
