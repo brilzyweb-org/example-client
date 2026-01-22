@@ -14,6 +14,5 @@ dist/
 *.db
 # Автоматически сгенерированные файлы
 src/utils/commonAssets.config.js
-src/components/index.js
 # Собранные файлы (создаются при npm run build)
 example-client/
