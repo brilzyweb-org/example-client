@@ -24,11 +24,23 @@ export function getPageAssets(componentPath, c = null) {
   const pageName = basePath.split('/').pop();
   
   // В dev режиме: используем исходные файлы из src/
-  // В production: используем страничные бандлы из css/ и js/
+  // В production: используем страничные бандлы из {projectId}/css/ и {projectId}/js/
   if (isProd) {
-    // Production: структура client/css/ и client/js/
-    const pageScript = `client/js/${pageName.toLowerCase()}.bundle.js`; // Бандл со всеми JS
-    const pageStyle = `client/css/${pageName.toLowerCase()}.bundle.css`; // Бандл со всеми CSS
+    // Production: структура {projectId}/css/ и {projectId}/js/ (без /client/)
+    // Получаем projectId из ASSETS_URL или env
+    let projectId = 'example-client';
+    if (c?.env?.PROJECT_ID) {
+      projectId = c.env.PROJECT_ID;
+    } else if (assetBase) {
+      // Пробуем извлечь из ASSETS_URL (например: https://cdn.brilzy.com/example-client)
+      const match = assetBase.match(/\/([^\/]+)\/?$/);
+      if (match && !match[1].includes('.')) {
+        projectId = match[1];
+      }
+    }
+    
+    const pageScript = `${projectId}/js/${pageName.toLowerCase()}.bundle.js`; // Бандл со всеми JS
+    const pageStyle = `${projectId}/css/${pageName.toLowerCase()}.bundle.css`; // Бандл со всеми CSS
     return {
       pageScript,
       pageStyle
