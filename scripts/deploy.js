@@ -36,7 +36,7 @@ async function deploy() {
 
   if (!githubToken) {
     console.error('❌ GITHUB_TOKEN не установлен');
-    console.log('💡 Установи переменную: GITHUB_TOKEN');
+    console.log('💡 Установи переменную: GITHUB_TOKEN (из Organization Secret: CDN_GITHUB_TOKEN)');
     console.log('💡 Получи токен у администратора (ограниченный доступ только к CDN репозиторию)');
     console.log('💡 Или создай Personal Access Token с правами только на CDN репозиторий');
     process.exit(1);
@@ -206,7 +206,10 @@ async function deploy() {
   const workerPath = join(projectRoot, projectId, 'server', 'worker.js');
   const vpsHost = process.env.VPS_HOST;
   const vpsUsername = process.env.VPS_USERNAME || 'root';
-  const vpsWorkerPath = process.env.VPS_WORKER_PATH || `/opt/agency-engine/projects/${projectId}`;
+  // VPS_WORKER_PATH из Organization Secrets - базовый путь (например: /opt/agency-engine/projects)
+  // Добавляем projectId для полного пути
+  const baseWorkerPath = process.env.VPS_WORKER_PATH || '/opt/agency-engine/projects';
+  const vpsWorkerPath = `${baseWorkerPath}/${projectId}`;
 
   if (!vpsHost) {
     console.log('⚠️  VPS_HOST не установлен, пропускаем деплой worker на VPS');

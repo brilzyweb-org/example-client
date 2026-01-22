@@ -139,20 +139,26 @@ sudo systemctl enable workerd
 sudo systemctl start workerd
 ```
 
-**Шаг 4: Настроить GitHub Secrets**
-В настройках репозитория → Secrets and variables → Actions:
-- `VPS_HOST` — IP или домен VPS (например: `123.45.67.89`)
-- `VPS_USERNAME` — пользователь SSH (например: `root` или `deploy`)
-- `VPS_SSH_KEY` — приватный SSH ключ для доступа к VPS
-- `VPS_WORKER_PATH` — путь к папке с worker.js (например: `/app/projects/example-client`)
+**Шаг 4: Настроить GitHub Organization Secrets (один раз для всех клиентов)**
 
-**Шаг 5: Обновить workflow**
-В `.github/workflows/deploy.yml` (строка 51) заменить путь на реальный:
-```yaml
-${{ secrets.VPS_WORKER_PATH }}/worker.js
-```
+📖 **Подробная инструкция**: [`docs/github-organization-setup.md`](../../docs/github-organization-setup.md)
 
-**Результат**: При пуше в `main` автоматически деплоится `worker.js` на VPS, workerd подхватит изменения (hot reload)
+**Кратко:**
+1. Создать Organization: https://github.com/organizations/new
+2. Переместить репозитории в Organization
+3. Настроить Organization Secrets:
+   - `CDN_GITHUB_TOKEN` — токен для доступа к CDN репозиторию
+   - `CDN_REPO` — `brilzyweb/cdn-assets`
+   - `CDN_BRANCH` — `main`
+   - `VPS_HOST` — IP VPS
+   - `VPS_USERNAME` — пользователь SSH
+   - `VPS_WORKER_PATH` — `/opt/agency-engine/projects`
+   - `VPS_SSH_KEY` — приватный SSH ключ
+
+**Результат**: 
+- ✅ Секреты настроены **один раз** на уровне Organization
+- ✅ Все новые репозитории автоматически получат доступ к секретам
+- ✅ При пуше в `main` автоматически деплоится `worker.js` на VPS, workerd подхватит изменения (hot reload)
 
 ---
 
