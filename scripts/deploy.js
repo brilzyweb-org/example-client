@@ -32,21 +32,17 @@ async function deploy() {
   const [repoOwner, repoName] = cdnRepo.split('/');
   const branch = process.env.CDN_BRANCH || 'main';
 
-  console.log(`📤 Отправка статики в CDN репозиторий: ${repoOwner}/${repoName} (ветка: ${branch})...`);
-
+  // Деплой в CDN (опционально, если есть токен)
   if (!githubToken) {
-    console.error('❌ GITHUB_TOKEN не установлен');
-    console.log('💡 Установи переменную: GITHUB_TOKEN (из Organization Secret: CDN_GITHUB_TOKEN)');
-    console.log('💡 Получи токен у администратора (ограниченный доступ только к CDN репозиторию)');
-    console.log('💡 Или создай Personal Access Token с правами только на CDN репозиторий');
-    process.exit(1);
-  }
-
-  if (!repoOwner || !repoName) {
-    console.error('❌ CDN_REPO указан неверно');
+    console.log('⚠️  GITHUB_TOKEN не установлен, пропускаем деплой в CDN');
+    console.log('💡 Установи переменную: GITHUB_TOKEN для деплоя статики в CDN');
+    console.log('💡 Продолжаем деплой bundle.js на VPS...\n');
+  } else if (!repoOwner || !repoName) {
+    console.log('⚠️  CDN_REPO указан неверно, пропускаем деплой в CDN');
     console.log('💡 Установи переменную: CDN_REPO=owner/repo (например: brilzyweb/cdn-assets)');
-    process.exit(1);
-  }
+    console.log('💡 Продолжаем деплой bundle.js на VPS...\n');
+  } else {
+    console.log(`📤 Отправка статики в CDN репозиторий: ${repoOwner}/${repoName} (ветка: ${branch})...`);
 
   // Функция для рекурсивного чтения файлов из папки
   function readFilesRecursive(dir, basePath = '') {
@@ -197,9 +193,10 @@ async function deploy() {
   }
   
     console.log('✅ Статика отправлена в GitHub через API\n');
-  } catch (error) {
-    console.error('❌ Ошибка при отправке в GitHub:', error.message);
-    process.exit(1);
+    } catch (error) {
+      console.error('❌ Ошибка при отправке в GitHub:', error.message);
+      console.log('💡 Продолжаем деплой bundle.js на VPS...\n');
+    }
   }
 
   // 4. Отправка bundle.js на VPS

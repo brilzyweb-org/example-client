@@ -1,4 +1,5 @@
 import { escapeHtml } from '../../utils/escapeHtml.js';
+import { renderMarkdown } from '../../utils/markdown.js';
 
 /**
  * Компонент главной страницы
@@ -6,8 +7,9 @@ import { escapeHtml } from '../../utils/escapeHtml.js';
  * @param {string} pageTitle - Заголовок страницы из site_settings
  * @param {string} pageContent - Контент страницы из site_settings (markdown)
  * @param {Function} img - Функция для оптимизации изображений
+ * @param {object} c - Контекст Hono для доступа к env
  */
-export function Home({ posts = [], pageTitle, pageContent, img }) {
+export function Home({ posts = [], pageTitle, pageContent, img, c }) {
   const postsList = posts.length > 0
     ? posts.map(post => {
         const imageHtml = post.image_url && img
@@ -31,11 +33,27 @@ export function Home({ posts = [], pageTitle, pageContent, img }) {
 
   // Используем данные из site_settings или дефолтные значения
   const title = pageTitle || 'Добро пожаловать!';
-  const content = pageContent || 'Это главная страница проекта на Hono + Vite + Wrangler.';
+  
+  // Если есть контент из базы, рендерим его, иначе показываем изображения
+  const pageContentHtml = (pageContent && pageContent.trim()) 
+    ? renderMarkdown(pageContent, img, c)
+    : /* html */ `
+      <p>Это главная страница проекта на Hono + Vite + Wrangler.</p>
+      <img src="${img('https://media.brilzy.com/example-client/images/5df0b1cf536dc90011e9f14d.png', {}, c)}" alt="Image 1" class="markdown-image">
+      <img src="${img('https://media.brilzy.com/example-client/images/DALL·E 2025-02-16 21.22.06 - A detailed digital illustration of a web browser interface, showcasing its core components as labeled elements. The illustration includes___- The brow.webp', {}, c)}" alt="DALL·E Browser" class="markdown-image">
+      <img src="${img('https://media.brilzy.com/example-client/images/IMG_2074.jpg', {}, c)}" alt="IMG 2074" class="markdown-image">
+      <img src="${img('https://media.brilzy.com/example-client/images/ajatar.jpeg', {}, c)}" alt="Ajatar" class="markdown-image">
+      <img src="${img('https://media.brilzy.com/example-client/images/javascript.png', {}, c)}" alt="JavaScript" class="markdown-image">
+      <img src="${img('https://media.brilzy.com/example-client/images/photo_2024-12-30_14-08-01.jpg', {}, c)}" alt="Photo 1" class="markdown-image">
+      <img src="${img('https://media.brilzy.com/example-client/images/photo_2024-12-30_14-08-43.jpg', {}, c)}" alt="Photo 2" class="markdown-image">
+      <img src="${img('https://media.brilzy.com/example-client/images/photo_2024-12-30_14-08-53.jpg', {}, c)}" alt="Photo 3" class="markdown-image">
+      <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-01-05_16-39-46.jpg', {}, c)}" alt="Photo 4" class="markdown-image">
+      <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-01-05_16-39-57.jpg', {}, c)}" alt="Photo 5" class="markdown-image">
+    `;
 
   return /* html */ `
     <h1>${escapeHtml(title)}</h1>
-    <div class="page-content">${escapeHtml(content)}</div>
+    <div class="page-content">${pageContentHtml}</div>
     <div class="posts-container">
       <h2>Посты из базы данных:</h2>
       ${postsList}

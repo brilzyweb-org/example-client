@@ -5,6 +5,9 @@ if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     console.log('🏠 Home page JavaScript loaded');
 
+    // Обработка ошибок загрузки изображений из markdown
+    initMarkdownImageErrorHandling();
+    
     // Интерактивность для постов
     initPostsInteraction();
     
@@ -82,4 +85,27 @@ function initPostViews() {
   });
   
   console.log('📊 Счетчики просмотров инициализированы');
+}
+
+/**
+ * Обработка ошибок загрузки изображений из markdown
+ */
+function initMarkdownImageErrorHandling() {
+  const markdownImages = document.querySelectorAll('.markdown-image');
+  
+  markdownImages.forEach((img) => {
+    // Обработка ошибки загрузки
+    img.addEventListener('error', () => {
+      console.warn('⚠️ Ошибка загрузки изображения:', img.src);
+      // Скрываем изображение при ошибке загрузки
+      img.style.display = 'none';
+    });
+    
+    // Логирование успешной загрузки
+    img.addEventListener('load', () => {
+      console.log('✅ Изображение загружено:', img.src);
+    });
+  });
+  
+  console.log('🖼️ Обработка ошибок изображений инициализирована');
 }

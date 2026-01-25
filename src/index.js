@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import adminConfigYml from './admin/config.yml.js';
 import adminIndexHtml from './admin/index.html.js';
+import adminR2MediaLibrary from './admin/r2-media-library.js';
 import { Layout } from './components/Layout.js';
 import { About } from './pages/About/About.js';
 import { Home } from './pages/Home/Home.js';
@@ -191,6 +192,15 @@ app.get('/admin/config.yml', () => {
   });
 });
 
+app.get('/admin/r2-media-library.js', () => {
+  return new Response(adminR2MediaLibrary, {
+    headers: {
+      'content-type': 'application/javascript; charset=utf-8',
+      'cache-control': 'public, max-age=3600',
+    },
+  });
+});
+
 app.get('/', async (c) => {
   const db = c.get('db');
   const [settings, postsRes] = await Promise.all([
@@ -202,7 +212,9 @@ app.get('/', async (c) => {
     children: Home({ 
       posts: postsRes.results || [], 
       pageTitle: settings['pages.home']?.title || 'Home',
-      img: (u, o) => getOptimizedImage(u, o, c) 
+      pageContent: settings['pages.home']?.content || '',
+      img: (u, o) => getOptimizedImage(u, o, c),
+      c
     }),
     title: `${settings['pages.home']?.title || 'Home'} - ${settings['site.title'] || 'Agency'}`,
     c, pageScript: assets.pageScript, pageStyle: assets.pageStyle
@@ -220,7 +232,9 @@ app.get('/about', async (c) => {
     children: About({ 
       technologies: techRes.results || [], 
       pageTitle: settings['pages.about']?.title || 'About',
-      img: (u, o) => getOptimizedImage(u, o, c)
+      pageContent: settings['pages.about']?.content || '',
+      img: (u, o) => getOptimizedImage(u, o, c),
+      c
     }),
     title: `${settings['pages.about']?.title || 'About'} - ${settings['site.title'] || 'Agency'}`,
     c, pageScript: assets.pageScript, pageStyle: assets.pageStyle
@@ -320,6 +334,63 @@ app.get('/api/image', (c) => {
   const url = c.req.query('url');
   if (!url) return c.json({ error: 'No URL' }, 400);
   return c.json({ url: getOptimizedImage(url, { w: c.req.query('w') }, c) });
+});
+
+app.post('/api/media/upload', async (c) => {
+  // Проверка авторизации (только для админов)
+  if (c.req.header('X-API-Key') !== c.env.ADMIN_API_KEY) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  // Проверка наличия R2 bucket
+  if (!c.env.MEDIA_BUCKET) {
+    return c.json({ error: 'Media bucket not configured' }, 500);
+  }
+
+  try {
+    const formData = await c.req.formData();
+    const file = formData.get('file');
+
+    if (!file || !(file instanceof File)) {
+      return c.json({ error: 'No file provided' }, 400);
+    }
+
+    // Получаем projectId из env или используем дефолтный
+    const projectId = c.env.PROJECT_ID || 'example-client';
+    
+    // Генерируем уникальное имя файла
+    const ext = file.name.split('.').pop() || 'jpg';
+    const timestamp = Date.now();
+    const randomId = crypto.randomUUID().split('-')[0];
+    const fileName = `${timestamp}-${randomId}.${ext}`;
+    
+    // Путь в R2: {projectId}/images/{fileName}
+    const r2Path = `${projectId}/images/${fileName}`;
+
+    // Загружаем файл в R2
+    await c.env.MEDIA_BUCKET.put(r2Path, file.stream(), {
+      httpMetadata: {
+        contentType: file.type || `image/${ext}`,
+      },
+    });
+
+    // Формируем публичный URL
+    const publicUrl = c.env.R2_PUBLIC_URL 
+      ? `${c.env.R2_PUBLIC_URL}/${r2Path}`
+      : `https://media.brilzy.com/${r2Path}`;
+
+    return c.json({
+      success: true,
+      url: publicUrl,
+      path: r2Path,
+      fileName: fileName,
+    });
+  } catch (error) {
+    return c.json({ 
+      error: 'Upload failed', 
+      message: error.message 
+    }, 500);
+  }
 });
 
 export default app;

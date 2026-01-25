@@ -18,9 +18,8 @@ ENVIRONMENT = "development"
 ASSETS_URL = "http://localhost:5173"
 
 # Публичный URL для R2 бакета с картинками (Custom Domain)
-# Пример: https://cdn.example-client.com
 # Настройка: В панели Cloudflare R2 → Connect Domain
-R2_PUBLIC_URL = "https://cdn.example-client.com"
+R2_PUBLIC_URL = "https://media.brilzy.com"
 
 # Gitea для Decap CMS
 GITEA_URL = "http://localhost:3000"
@@ -29,6 +28,11 @@ GITEA_APP_ID = "e707cefe-249b-4763-b0ff-6c282e6b79d2"
 
 # Sync Service URL (для webhook)
 SYNC_SERVICE_URL = "http://localhost:8788"
+
+# R2 Bucket для медиа файлов
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "agency-media-bucket"
 
 [[d1_databases]]
 binding = "DB"

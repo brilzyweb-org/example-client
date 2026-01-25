@@ -9,8 +9,18 @@ backend:
   # Redirect URI должен быть: https://webpreneurstudio.com/admin/
   app_id: 507f93a2-2195-4ae0-8b2c-8aa32a69463d
 
+# Media folder используется для хранения метаданных о загруженных файлах
+# Фактические файлы хранятся в R2 через кастомный media library
 media_folder: "uploads"
-public_folder: "/uploads"
+# Public folder указывает базовый URL для изображений из R2
+# Кастомный media library возвращает полные URL, но это для совместимости
+public_folder: "https://media.brilzy.com"
+
+# Кастомный Media Library для R2
+media_library:
+  name: r2
+  config:
+    apiKey: "FINLAND_SUPER_SECRET_2026"
 
 collections:
   - name: "site_content"
