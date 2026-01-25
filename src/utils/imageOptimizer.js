@@ -66,7 +66,14 @@ export function getOptimizedImage(imageUrl, options = {}, c) {
     return absoluteUrl;
   }
 
-  // В production используем weserv.nl для оптимизации
+  // Если изображение уже из R2 (media.brilzy.com), возвращаем напрямую без прокси
+  // Это избегает проблем с CORS и загрузкой через weserv.nl
+  const r2BaseUrl = c?.env?.R2_PUBLIC_URL || 'https://media.brilzy.com';
+  if (absoluteUrl.startsWith(r2BaseUrl)) {
+    return absoluteUrl;
+  }
+
+  // Для внешних изображений используем weserv.nl для оптимизации
   const { width, height, quality = 80, format = 'webp' } = options;
   const params = new URLSearchParams();
   if (width) params.append('w', width);
