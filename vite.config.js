@@ -346,10 +346,10 @@ export default defineConfig(({ mode }) => {
         chunkFileNames: (chunkInfo) => {
           const name = chunkInfo.name || 'chunk';
           if (name.endsWith('.css')) {
-            const fileName = name.split('/').pop();
+            const fileName = name.split('/').pop()?.toLowerCase() || 'chunk.css';
             return `css/${fileName}`;
           }
-          const fileName = name.split('/').pop() || 'chunk';
+          const fileName = (name.split('/').pop() || 'chunk').toLowerCase();
           return `js/${fileName}`;
         },
         // Группируем зависимости в отдельные чанки только если они большие
@@ -360,17 +360,17 @@ export default defineConfig(({ mode }) => {
             const ext = assetInfo.name.split('.').pop()?.toLowerCase();
             // Изображения и шрифты в assets/
             if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'ico', 'woff', 'woff2', 'ttf', 'eot'].includes(ext)) {
-              const fileName = assetInfo.name.split('/').pop();
+              const fileName = assetInfo.name.split('/').pop()?.toLowerCase() || 'asset';
               return `assets/${fileName}`;
             }
             // CSS файлы
             if (ext === 'css') {
-              const fileName = assetInfo.name.split('/').pop();
+              const fileName = assetInfo.name.split('/').pop()?.toLowerCase() || 'style.css';
               return `css/${fileName}`;
             }
           }
           // Остальное в assets/
-          const fileName = assetInfo.name?.split('/').pop() || 'asset';
+          const fileName = (assetInfo.name?.split('/').pop() || 'asset').toLowerCase();
           return `assets/${fileName}`;
         },
       },

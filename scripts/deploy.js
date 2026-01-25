@@ -220,7 +220,24 @@ async function deploy() {
         ? `scp "${bundlePath}" ${vpsUsername}@${vpsHost}:${vpsWorkerPath.replace(/\\/g, '/')}/bundle.js`
         : `scp "${bundlePath}" ${vpsUsername}@${vpsHost}:${vpsWorkerPath}/bundle.js`;
       execSync(scpCommand, { stdio: 'inherit', shell: isWindows });
-      console.log(`✅ Bundle отправлен на VPS: ${vpsWorkerPath}/bundle.js\n`);
+      console.log(`✅ Bundle отправлен на VPS: ${vpsWorkerPath}/bundle.js`);
+      
+      // Обновляем конфиг workerd на VPS через SSH
+      console.log('🔄 Обновление конфига workerd на VPS...');
+      try {
+        const sshCommand = isWindows
+          ? `ssh ${vpsUsername}@${vpsHost} "cd /opt/agency-engine && ./scripts/generate-config-vps.sh && docker restart agency-renderer"`
+          : `ssh ${vpsUsername}@${vpsHost} 'cd /opt/agency-engine && ./scripts/generate-config-vps.sh && docker restart agency-renderer'`;
+        execSync(sshCommand, { stdio: 'inherit', shell: isWindows });
+        console.log('✅ Конфиг обновлен и контейнер перезапущен\n');
+      } catch (error) {
+        console.warn('⚠️  Не удалось обновить конфиг автоматически:', error.message);
+        console.log('💡 Выполни вручную на VPS:');
+        console.log(`   ssh ${vpsUsername}@${vpsHost}`);
+        console.log('   cd /opt/agency-engine');
+        console.log('   ./scripts/generate-config-vps.sh');
+        console.log('   docker restart agency-renderer\n');
+      }
     } catch (error) {
       console.error('❌ Ошибка при отправке bundle.js на VPS:', error.message);
       console.log('💡 Проверь SSH доступ и переменные окружения');
