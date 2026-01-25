@@ -34,22 +34,30 @@ export function Home({ posts = [], pageTitle, pageContent, img, c }) {
   // Используем данные из site_settings или дефолтные значения
   const title = pageTitle || 'Добро пожаловать!';
   
-  // Если есть контент из базы, рендерим его, иначе показываем изображения
-  const pageContentHtml = (pageContent && pageContent.trim()) 
+  // Дефолтный текст (всегда показываем)
+  const defaultText = /* html */ `<p>Это главная страница проекта на Hono + Vite + Wrangler.</p>`;
+  
+  // Дефолтные изображения (всегда показываем)
+  const defaultImages = /* html */ `
+    <img src="${img('https://media.brilzy.com/example-client/images/5df0b1cf536dc90011e9f14d.png', {}, c)}" alt="Image 1" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/DALL·E 2025-02-16 21.22.06 - A detailed digital illustration of a web browser interface, showcasing its core components as labeled elements. The illustration includes___- The brow.webp', {}, c)}" alt="DALL·E Browser" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/IMG_2074.jpg', {}, c)}" alt="IMG 2074" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/ajatar.jpeg', {}, c)}" alt="Ajatar" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/javascript.png', {}, c)}" alt="JavaScript" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/photo_2024-12-30_14-08-01.jpg', {}, c)}" alt="Photo 1" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/photo_2024-12-30_14-08-43.jpg', {}, c)}" alt="Photo 2" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/photo_2024-12-30_14-08-53.jpg', {}, c)}" alt="Photo 3" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-01-05_16-39-46.jpg', {}, c)}" alt="Photo 4" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-01-05_16-39-57.jpg', {}, c)}" alt="Photo 5" class="markdown-image">
+  `;
+  
+  // Контент из БД (если есть, рендерим его)
+  const dbContent = (pageContent && pageContent.trim()) 
     ? renderMarkdown(pageContent, img, c)
-    : /* html */ `
-      <p>Это главная страница проекта на Hono + Vite + Wrangler.</p>
-      <img src="${img('https://media.brilzy.com/example-client/images/5df0b1cf536dc90011e9f14d.png', {}, c)}" alt="Image 1" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/DALL·E 2025-02-16 21.22.06 - A detailed digital illustration of a web browser interface, showcasing its core components as labeled elements. The illustration includes___- The brow.webp', {}, c)}" alt="DALL·E Browser" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/IMG_2074.jpg', {}, c)}" alt="IMG 2074" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/ajatar.jpeg', {}, c)}" alt="Ajatar" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/javascript.png', {}, c)}" alt="JavaScript" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/photo_2024-12-30_14-08-01.jpg', {}, c)}" alt="Photo 1" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/photo_2024-12-30_14-08-43.jpg', {}, c)}" alt="Photo 2" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/photo_2024-12-30_14-08-53.jpg', {}, c)}" alt="Photo 3" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-01-05_16-39-46.jpg', {}, c)}" alt="Photo 4" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-01-05_16-39-57.jpg', {}, c)}" alt="Photo 5" class="markdown-image">
-    `;
+    : '';
+  
+  // Объединяем ВСЕ: дефолтный текст + контент из БД + дефолтные изображения
+  const pageContentHtml = `${defaultText}${dbContent}${defaultImages}`;
 
   return /* html */ `
     <h1>${escapeHtml(title)}</h1>

@@ -38,17 +38,25 @@ export function About({ technologies = [], pageTitle, pageContent, img, c }) {
   // Используем данные из site_settings или дефолтные значения
   const title = pageTitle || 'О нас';
   
-  // Если есть контент из базы, рендерим его, иначе показываем изображения
-  const pageContentHtml = (pageContent && pageContent.trim()) 
+  // Дефолтный текст (всегда показываем)
+  const defaultText = /* html */ `<p>Это современный веб-проект, построенный на стеке Cloudflare Workers. Мы используем передовые технологии для создания быстрых и масштабируемых приложений.</p>`;
+  
+  // Дефолтные изображения (всегда показываем)
+  const defaultImages = /* html */ `
+    <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-02-13_20-11-57.jpg', {}, c)}" alt="Photo 6" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-02-13_20-12-09.jpg', {}, c)}" alt="Photo 7" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-02-13_20-12-18.jpg', {}, c)}" alt="Photo 8" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-02-13_20-12-23.jpg', {}, c)}" alt="Photo 9" class="markdown-image">
+    <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-02-13_20-12-26.jpg', {}, c)}" alt="Photo 10" class="markdown-image">
+  `;
+  
+  // Контент из БД (если есть, рендерим его)
+  const dbContent = (pageContent && pageContent.trim()) 
     ? renderMarkdown(pageContent, img, c)
-    : /* html */ `
-      <p>Это современный веб-проект, построенный на стеке Cloudflare Workers. Мы используем передовые технологии для создания быстрых и масштабируемых приложений.</p>
-      <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-02-13_20-11-57.jpg', {}, c)}" alt="Photo 6" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-02-13_20-12-09.jpg', {}, c)}" alt="Photo 7" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-02-13_20-12-18.jpg', {}, c)}" alt="Photo 8" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-02-13_20-12-23.jpg', {}, c)}" alt="Photo 9" class="markdown-image">
-      <img src="${img('https://media.brilzy.com/example-client/images/photo_2025-02-13_20-12-26.jpg', {}, c)}" alt="Photo 10" class="markdown-image">
-    `;
+    : '';
+  
+  // Объединяем ВСЕ: дефолтный текст + контент из БД + дефолтные изображения
+  const pageContentHtml = `${defaultText}${dbContent}${defaultImages}`;
 
   return /* html */ `
     <h1>${escapeHtml(title)}</h1>
