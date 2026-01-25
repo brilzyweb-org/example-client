@@ -63,6 +63,23 @@ collections:
                   - label: "Content"
                     name: "content"
                     widget: "markdown"
+                    buttons:
+                      - bold
+                      - italic
+                      - link
+                      - heading-one
+                      - heading-two
+                      - heading-three
+                      - heading-four
+                      - heading-five
+                      - heading-six
+                      - code
+                      - quote
+                      - bulleted-list
+                      - numbered-list
+                      - image
+                    editor_components:
+                      - image
               - label: "About"
                 name: "about"
                 widget: "object"
@@ -73,6 +90,23 @@ collections:
                   - label: "Content"
                     name: "content"
                     widget: "markdown"
+                    buttons:
+                      - bold
+                      - italic
+                      - link
+                      - heading-one
+                      - heading-two
+                      - heading-three
+                      - heading-four
+                      - heading-five
+                      - heading-six
+                      - code
+                      - quote
+                      - bulleted-list
+                      - numbered-list
+                      - image
+                    editor_components:
+                      - image
 
           - label: "Posts"
             name: "posts"
@@ -84,6 +118,23 @@ collections:
               - label: "Content"
                 name: "content"
                 widget: "markdown"
+                buttons:
+                  - bold
+                  - italic
+                  - link
+                  - heading-one
+                  - heading-two
+                  - heading-three
+                  - heading-four
+                  - heading-five
+                  - heading-six
+                  - code
+                  - quote
+                  - bulleted-list
+                  - numbered-list
+                  - image
+                editor_components:
+                  - image
 
           - label: "Technologies"
             name: "technologies"

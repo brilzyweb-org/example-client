@@ -66,9 +66,28 @@
   };
 
   // Регистрируем кастомный media library в Decap CMS
-  if (typeof window !== 'undefined' && window.CMS) {
-    window.CMS.registerMediaLibrary(R2MediaLibrary, {
-      name: 'r2',
-    });
+  // Ждем загрузки Decap CMS, если он еще не загружен
+  function registerMediaLibrary() {
+    if (typeof window !== 'undefined' && window.CMS && window.CMS.registerMediaLibrary) {
+      window.CMS.registerMediaLibrary(R2MediaLibrary, {
+        name: 'r2',
+      });
+      console.log('R2 Media Library зарегистрирован');
+    } else {
+      // Если CMS еще не загружен, ждем
+      setTimeout(registerMediaLibrary, 100);
+    }
+  }
+
+  // Пробуем зарегистрировать сразу
+  registerMediaLibrary();
+
+  // Также слушаем событие загрузки CMS
+  if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', registerMediaLibrary);
+    // Если скрипт загрузился после DOMContentLoaded
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      registerMediaLibrary();
+    }
   }
 })();
