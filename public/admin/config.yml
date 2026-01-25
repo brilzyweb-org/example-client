@@ -9,14 +9,17 @@ backend:
   # Redirect URI должен быть: https://webpreneurstudio.com/admin/
   app_id: 507f93a2-2195-4ae0-8b2c-8aa32a69463d
 
-# Media folder используется для хранения метаданных о загруженных файлах
-# Фактические файлы хранятся в R2 через кастомный media library
+# ВАЖНО: media_folder НЕ используется для реального хранения файлов
+# Все изображения хранятся в R2 bucket через кастомный media library
+# media_folder нужен только для совместимости с Decap CMS, но файлы туда НЕ сохраняются
 media_folder: "uploads"
-# Public folder указывает базовый URL для изображений из R2
-# Кастомный media library возвращает полные URL, но это для совместимости
+# public_folder используется для формирования URL при отображении
+# Но реальные файлы находятся в R2: https://media.brilzy.com/{projectId}/images/{file}
 public_folder: "https://media.brilzy.com"
 
 # Кастомный Media Library для R2
+# Перехватывает ВСЕ операции с изображениями и перенаправляет их на R2
+# Файлы НЕ сохраняются в Git репозиторий
 media_library:
   name: r2
   config:

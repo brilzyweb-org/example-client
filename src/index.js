@@ -342,11 +342,6 @@ app.post('/api/media/upload', async (c) => {
     return c.json({ error: 'Unauthorized' }, 401);
   }
 
-  // Проверка наличия R2 bucket
-  if (!c.env.MEDIA_BUCKET) {
-    return c.json({ error: 'Media bucket not configured' }, 500);
-  }
-
   try {
     const formData = await c.req.formData();
     const file = formData.get('file');
@@ -366,6 +361,11 @@ app.post('/api/media/upload', async (c) => {
     
     // Путь в R2: {projectId}/images/{fileName}
     const r2Path = `${projectId}/images/${fileName}`;
+
+    // Проверка наличия R2 bucket
+    if (!c.env.MEDIA_BUCKET) {
+      return c.json({ error: 'Media bucket not configured' }, 500);
+    }
 
     // Загружаем файл в R2
     await c.env.MEDIA_BUCKET.put(r2Path, file.stream(), {
@@ -392,5 +392,103 @@ app.post('/api/media/upload', async (c) => {
     }, 500);
   }
 });
+
+app.delete('/api/media/delete', async (c) => {
+  // Проверка авторизации (только для админов)
+  if (c.req.header('X-API-Key') !== c.env.ADMIN_API_KEY) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  try {
+    const body = await c.req.json();
+    const filePath = body.path || body.url;
+
+    if (!filePath) {
+      return c.json({ error: 'No file path provided' }, 400);
+    }
+
+    // Проверка наличия R2 bucket
+    if (!c.env.MEDIA_BUCKET) {
+      return c.json({ error: 'Media bucket not configured' }, 500);
+    }
+
+    // Нормализуем путь: если передан полный URL, извлекаем относительный путь
+    let r2Path = filePath;
+    if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+      // Извлекаем путь из URL: https://media.brilzy.com/example-client/images/file.jpg
+      // -> example-client/images/file.jpg
+      try {
+        const url = new URL(filePath);
+        r2Path = url.pathname.replace(/^\//, ''); // Убираем ведущий слеш
+      } catch (e) {
+        return c.json({ error: 'Invalid URL format' }, 400);
+      }
+    }
+
+    // Удаляем файл из R2
+    await c.env.MEDIA_BUCKET.delete(r2Path);
+
+    return c.json({
+      success: true,
+      path: r2Path,
+      message: 'File deleted from R2',
+    });
+  } catch (error) {
+    return c.json({ 
+      error: 'Delete failed', 
+      message: error.message 
+    }, 500);
+  }
+});
+
+app.get('/api/media/list', async (c) => {
+  // Проверка авторизации (только для админов)
+  if (c.req.header('X-API-Key') !== c.env.ADMIN_API_KEY) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  try {
+    // Проверка наличия R2 bucket
+    if (!c.env.MEDIA_BUCKET) {
+      return c.json({ error: 'Media bucket not configured' }, 500);
+    }
+
+    const projectId = c.env.PROJECT_ID || 'example-client';
+    const prefix = `${projectId}/images/`;
+
+    // Получаем список файлов из R2
+    const list = await c.env.MEDIA_BUCKET.list({
+      prefix: prefix,
+      limit: 1000, // Максимум файлов
+    });
+
+    const files = (list.objects || []).map(obj => {
+      const fileName = obj.key.replace(prefix, '');
+      const publicUrl = c.env.R2_PUBLIC_URL 
+        ? `${c.env.R2_PUBLIC_URL}/${obj.key}`
+        : `https://media.brilzy.com/${obj.key}`;
+
+      return {
+        url: obj.key, // Относительный путь для сохранения в БД
+        path: obj.key,
+        fileName: fileName,
+        size: obj.size,
+        uploaded: obj.uploaded,
+        publicUrl: publicUrl,
+      };
+    });
+
+    return c.json({
+      success: true,
+      files: files,
+    });
+  } catch (error) {
+    return c.json({ 
+      error: 'List failed', 
+      message: error.message 
+    }, 500);
+  }
+});
+
 
 export default app;
